@@ -1,0 +1,465 @@
+cd "D:\my index\my profile"
+git init
+git add .
+git commit -m "第1次提交：创建首页"
+
+# 修改一点内容（比如用记事本或VS Code打开index.html随便加个字），再提交：
+git add .
+git commit -m "第2次提交：完善内容"
+git add .
+git commit -m "第3次提交：最终调整"
+
+https://hub-jovi8.vercel.app/
+https://2140839500-eng.github.io/-hub/
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🍬 马卡龙计算器</title>
+<style>
+    /* ========== 基础样式 ========== */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Comic Sans MS', 'Chalkboard SE', 'PingFang SC', 'Microsoft YaHei', cursive, sans-serif;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: linear-gradient(160deg, #fff0f4 0%, #fff8e8 30%, #eefaf2 60%, #eef1fd 100%);
+        overflow: hidden;
+    }
+
+    /* ========== 漂浮气泡 ========== */
+    .bubble {
+        position: fixed;
+        bottom: -60px;
+        border-radius: 50%;
+        opacity: 0.35;
+        animation: floatUp linear infinite;
+        pointer-events: none;
+        z-index: 0;
+        filter: blur(1px);
+    }
+
+    @keyframes floatUp {
+        0%   { transform: translateY(0) rotate(0deg); opacity: 0.35; }
+        100% { transform: translateY(-110vh) rotate(360deg); opacity: 0; }
+    }
+
+    /* ========== 计算器主体 ========== */
+    .calculator {
+        position: relative;
+        z-index: 1;
+        width: 350px;
+        background: rgba(255, 255, 255, 0.55);
+        backdrop-filter: blur(22px) saturate(1.3);
+        -webkit-backdrop-filter: blur(22px) saturate(1.3);
+        border: 2px solid rgba(255, 255, 255, 0.8);
+        border-radius: 36px;
+        padding: 26px 22px;
+        box-shadow:
+            0 24px 60px rgba(180, 160, 220, 0.22),
+            0 8px 20px rgba(255, 170, 200, 0.12),
+            inset 0 1px 0 rgba(255, 255, 255, 0.95);
+        animation: popIn 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    }
+
+    @keyframes popIn {
+        0%   { transform: scale(0.6) rotate(-3deg); opacity: 0; }
+        100% { transform: scale(1) rotate(0deg); opacity: 1; }
+    }
+
+    /* ========== 标题 ========== */
+    .title {
+        text-align: center;
+        font-size: 23px;
+        font-weight: bold;
+        letter-spacing: 3px;
+        margin-bottom: 16px;
+        background: linear-gradient(90deg, #f7a8c4, #f9c8a0, #f7dd8e, #a8dfc0, #a9c4f0, #cbb2f0, #f7a8c4);
+        background-size: 300% 100%;
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: rainbowFlow 6s linear infinite;
+    }
+
+    @keyframes rainbowFlow {
+        0%   { background-position: 0% 50%; }
+        100% { background-position: 300% 50%; }
+    }
+
+    /* ========== 显示屏 ========== */
+    .screen {
+        position: relative;
+        background: rgba(255, 255, 255, 0.94);
+        border-radius: 22px;
+        padding: 18px 20px 14px;
+        margin-bottom: 20px;
+        min-height: 100px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        box-shadow:
+            inset 0 3px 10px rgba(150, 130, 200, 0.1),
+            0 0 0 3px rgba(255, 255, 255, 0.7),
+            0 0 24px rgba(250, 183, 210, 0.35);
+        overflow: hidden;
+    }
+
+    .screen::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        height: 5px;
+        background: linear-gradient(90deg, #f7a8c4, #f9c8a0, #f7dd8e, #a8dfc0, #a9c4f0, #cbb2f0);
+        border-radius: 22px 22px 0 0;
+    }
+
+    .history {
+        font-size: 15px;
+        color: #bcb3ce;
+        min-height: 20px;
+        word-wrap: break-word;
+        margin-top: 4px;
+    }
+
+    .display {
+        font-size: 38px;
+        font-weight: bold;
+        color: #7d7590;
+        word-wrap: break-word;
+        word-break: break-all;
+    }
+
+    .display.bounce {
+        animation: bounce 0.3s ease;
+    }
+
+    @keyframes bounce {
+        0%   { transform: scale(1); }
+        40%  { transform: scale(1.1); }
+        100% { transform: scale(1); }
+    }
+
+    /* ========== 按钮网格 ========== */
+    .buttons {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 13px;
+    }
+
+    button.btn {
+        border: none;
+        outline: none;
+        height: 64px;
+        border-radius: 20px;
+        font-size: 25px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.15s;
+        user-select: none;
+    }
+
+    button.btn:active {
+        transform: translateY(4px) scale(0.95);
+        filter: brightness(1.05) saturate(1.1);
+    }
+
+    /* ---- 🍬 数字键：自然马卡龙双色渐变 ---- */
+    .btn-num {
+        color: #fff;
+        text-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+        box-shadow: 0 5px 0 var(--shadow), 0 10px 16px rgba(160, 140, 200, 0.14);
+    }
+    .btn-num:active {
+        box-shadow: 0 1px 0 var(--shadow), 0 3px 8px rgba(160, 140, 200, 0.12);
+    }
+
+    /* 每行一个色系，同色系内自然深浅过渡 */
+    .btn-n7 { background: linear-gradient(150deg, #fcd0e0, #f7a8c4); --shadow: #eb9fb8; }  /* 樱花粉 */
+    .btn-n8 { background: linear-gradient(150deg, #fdd9c0, #f9bd94); --shadow: #ecb18c; }  /* 杏桃 */
+    .btn-n9 { background: linear-gradient(150deg, #faedb5, #f5da8c); --shadow: #e3ca84; }  /* 香草黄 */
+
+    .btn-n4 { background: linear-gradient(150deg, #c5ead3, #98d8b4); --shadow: #8cc8a6; }  /* 抹茶 */
+    .btn-n5 { background: linear-gradient(150deg, #bdeae2, #8dd9cd); --shadow: #81c6bb; }  /* 薄荷 */
+    .btn-n6 { background: linear-gradient(150deg, #c4e0f7, #93c9ee); --shadow: #87b9dc; }  /* 海盐蓝 */
+
+    .btn-n1 { background: linear-gradient(150deg, #c6cdf5, #9aa6ec); --shadow: #8c97d6; }  /* 蓝莓 */
+    .btn-n2 { background: linear-gradient(150deg, #dccdf3, #bd9fe8); --shadow: #ab8ed2; }  /* 香芋紫 */
+    .btn-n3 { background: linear-gradient(150deg, #f7cbe4, #eaa4cd); --shadow: #d694ba; }  /* 玫瑰粉 */
+
+    .btn-zero {
+        background: linear-gradient(90deg, #fcd0e0, #fdd9c0, #faedb5, #c5ead3, #c4e0f7, #dccdf3);
+        color: #fff;
+        grid-column: span 2;
+        text-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+        box-shadow: 0 5px 0 #cfc4e0, 0 10px 16px rgba(160, 140, 200, 0.14);
+    }
+    .btn-zero:active {
+        box-shadow: 0 1px 0 #cfc4e0, 0 3px 8px rgba(160, 140, 200, 0.12);
+    }
+
+    /* ---- 功能键 ---- */
+    .btn-clear, .btn-del, .btn-op, .btn-dot, .btn-equal {
+        color: #fff;
+        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+    }
+
+    .btn-clear  { background: linear-gradient(150deg, #d8d2e6, #b8b0cc); box-shadow: 0 5px 0 #a39bb8, 0 10px 16px rgba(160, 140, 200, 0.14); }
+    .btn-del    { background: linear-gradient(150deg, #f0c8ae, #e0a583); box-shadow: 0 5px 0 #c99476, 0 10px 16px rgba(200, 150, 120, 0.14); }
+    .btn-op     { background: linear-gradient(150deg, #bcc4ef, #93a0e5); box-shadow: 0 5px 0 #8090cf, 0 10px 16px rgba(140, 150, 220, 0.14); }
+    .btn-dot    { background: linear-gradient(150deg, #d3bce9, #b28fdd); box-shadow: 0 5px 0 #9c7cc6, 0 10px 16px rgba(170, 140, 210, 0.14); }
+
+    .btn-equal  {
+        background: linear-gradient(90deg, #f7a8c4, #f9c8a0, #f7dd8e, #a8dfc0, #a9c4f0, #cbb2f0);
+        background-size: 250% 100%;
+        grid-column: span 2;
+        font-size: 28px;
+        animation: rainbowFlow 5s linear infinite;
+        box-shadow: 0 5px 0 rgba(150, 120, 190, 0.4), 0 10px 16px rgba(160, 140, 200, 0.16);
+    }
+
+    .btn:hover {
+        filter: brightness(1.05) saturate(1.1);
+        transform: translateY(-2px);
+    }
+
+    /* ========== 结果彩蛋表情 ========== */
+    .emoji-pop {
+        position: fixed;
+        font-size: 42px;
+        pointer-events: none;
+        z-index: 99;
+        animation: emojiFly 1s ease-out forwards;
+    }
+
+    @keyframes emojiFly {
+        0%   { transform: translateY(0) scale(0.5) rotate(0deg); opacity: 1; }
+        100% { transform: translateY(-130px) scale(1.5) rotate(25deg); opacity: 0; }
+    }
+
+    /* 响应式 */
+    @media (max-width: 390px) {
+        .calculator { width: 92vw; padding: 20px 16px; }
+        button.btn { height: 56px; font-size: 21px; }
+        .display { font-size: 32px; }
+    }
+</style>
+</head>
+<body>
+
+<div class="calculator">
+    <div class="title">🍬 马卡龙计算器</div>
+
+    <div class="screen">
+        <div class="history" id="history"></div>
+        <div class="display" id="display">0</div>
+    </div>
+
+    <div class="buttons">
+        <button class="btn btn-clear"  data-action="clear">C</button>
+        <button class="btn btn-del"    data-action="delete">⌫</button>
+        <button class="btn btn-op"     data-value="%">%</button>
+        <button class="btn btn-op"     data-value="÷">÷</button>
+
+        <button class="btn btn-num btn-n7" data-value="7">7</button>
+        <button class="btn btn-num btn-n8" data-value="8">8</button>
+        <button class="btn btn-num btn-n9" data-value="9">9</button>
+        <button class="btn btn-op"     data-value="×">×</button>
+
+        <button class="btn btn-num btn-n4" data-value="4">4</button>
+        <button class="btn btn-num btn-n5" data-value="5">5</button>
+        <button class="btn btn-num btn-n6" data-value="6">6</button>
+        <button class="btn btn-op"     data-value="−">−</button>
+
+        <button class="btn btn-num btn-n1" data-value="1">1</button>
+        <button class="btn btn-num btn-n2" data-value="2">2</button>
+        <button class="btn btn-num btn-n3" data-value="3">3</button>
+        <button class="btn btn-op"     data-value="+">+</button>
+
+        <button class="btn btn-zero"   data-value="0">0</button>
+        <button class="btn btn-dot"    data-value=".">.</button>
+        <button class="btn btn-equal"  data-action="equals">=</button>
+    </div>
+</div>
+
+<script>
+    // ================= 状态 =================
+    const displayEl = document.getElementById('display');
+    const historyEl = document.getElementById('history');
+    let expression = '';
+    let justCalculated = false;
+
+    const symbolMap = { '×': '*', '÷': '/', '−': '-', '%': '/100', '+': '+', '.': '.' };
+
+    // ================= 工具函数 =================
+    function refreshDisplay() {
+        displayEl.textContent = expression === '' ? '0' : expression;
+        displayEl.classList.remove('bounce');
+        void displayEl.offsetWidth;
+        displayEl.classList.add('bounce');
+    }
+
+    function formatResult(num) {
+        if (!isFinite(num)) return '⚠️ 除数不能为 0 哦';
+        let rounded = Math.round(num * 1e10) / 1e10;
+        let str = String(rounded);
+        if (str.length > 12) str = rounded.toExponential(6);
+        return str;
+    }
+
+    function popEmoji(x, y) {
+        const emojis = ['🎉', '✨', '🌈', '💖', '🍬', '⭐', '🥳', '🧁'];
+        const el = document.createElement('div');
+        el.className = 'emoji-pop';
+        el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+        el.style.left = (x - 20) + 'px';
+        el.style.top = (y - 20) + 'px';
+        document.body.appendChild(el);
+        setTimeout(() => el.remove(), 1000);
+    }
+
+    // ================= 核心逻辑 =================
+    function inputValue(val) {
+        if (justCalculated) {
+            if (/[0-9.]/.test(val)) {
+                expression = '';
+                historyEl.textContent = '';
+            }
+            justCalculated = false;
+        }
+
+        if (expression.length >= 30) return;
+
+        const isOperator = ['+', '−', '×', '÷'].includes(val);
+        const lastChar = expression.slice(-1);
+
+        if (isOperator) {
+            if (expression === '') return;
+            if (['+', '−', '×', '÷'].includes(lastChar)) {
+                expression = expression.slice(0, -1) + val;
+            } else {
+                expression += val;
+            }
+        } else if (val === '.') {
+            const parts = expression.split(/[+−×÷]/);
+            const currentNumber = parts[parts.length - 1];
+            if (currentNumber.includes('.')) return;
+            expression += val;
+        } else if (val === '%') {
+            if (/\d/.test(lastChar)) expression += val;
+        } else {
+            if (lastChar === '0' && /^\d$/.test(val) &&
+                (expression.length === 1 || /[+−×÷]/.test(expression.slice(-2, -1)))) {
+                expression = expression.slice(0, -1) + val;
+            } else {
+                expression += val;
+            }
+        }
+        refreshDisplay();
+    }
+
+    function deleteLast() {
+        justCalculated = false;
+        expression = expression.slice(0, -1);
+        refreshDisplay();
+    }
+
+    function clearAll() {
+        expression = '';
+        historyEl.textContent = '';
+        justCalculated = false;
+        refreshDisplay();
+    }
+
+    function calculate() {
+        if (expression === '') return;
+
+        let expr = expression;
+        while (/[+−×÷]$/.test(expr)) {
+            expr = expr.slice(0, -1);
+        }
+        if (expr === '') return;
+
+        let jsExpr = '';
+        for (const ch of expr) {
+            jsExpr += symbolMap[ch] !== undefined ? symbolMap[ch] : ch;
+        }
+
+        let result;
+        try {
+            result = Function('"use strict"; return (' + jsExpr + ')')();
+        } catch (e) {
+            displayEl.textContent = '😵 出错了';
+            expression = '';
+            return;
+        }
+
+        const output = formatResult(result);
+        historyEl.textContent = expr + ' =';
+        expression = output.startsWith('⚠️') ? '' : output;
+        justCalculated = true;
+        displayEl.textContent = output;
+        displayEl.classList.remove('bounce');
+        void displayEl.offsetWidth;
+        displayEl.classList.add('bounce');
+    }
+
+    // ================= 事件绑定 =================
+    document.querySelectorAll('button.btn').forEach(btn => {
+        btn.addEventListener('click', e => {
+            const action = btn.dataset.action;
+            const value = btn.dataset.value;
+            if (action === 'clear')  clearAll();
+            else if (action === 'delete') deleteLast();
+            else if (action === 'equals') {
+                calculate();
+                if (!displayEl.textContent.startsWith('⚠️') &&
+                    !displayEl.textContent.startsWith('😵')) {
+                    popEmoji(e.clientX, e.clientY);
+                }
+            }
+            else if (value !== undefined) inputValue(value);
+        });
+    });
+
+    // 键盘支持
+    document.addEventListener('keydown', e => {
+        const key = e.key;
+        if (/^[0-9]$/.test(key)) inputValue(key);
+        else if (key === '.') inputValue('.');
+        else if (key === '+') inputValue('+');
+        else if (key === '-') inputValue('−');
+        else if (key === '*') inputValue('×');
+        else if (key === '/') { e.preventDefault(); inputValue('÷'); }
+        else if (key === '%') inputValue('%');
+        else if (key === 'Enter' || key === '=') { e.preventDefault(); calculate(); }
+        else if (key === 'Backspace') deleteLast();
+        else if (key === 'Escape') clearAll();
+    });
+
+    // ================= 背景漂浮气泡 =================
+    const bubbleColors = ['#f7a8c4', '#f9c8a0', '#f7dd8e', '#a8dfc0', '#a9c4f0', '#cbb2f0'];
+    for (let i = 0; i < 14; i++) {
+        const b = document.createElement('div');
+        b.className = 'bubble';
+        const size = 15 + Math.random() * 45;
+        b.style.width = b.style.height = size + 'px';
+        b.style.left = Math.random() * 100 + 'vw';
+        b.style.background = bubbleColors[i % bubbleColors.length];
+        b.style.animationDuration = (8 + Math.random() * 10) + 's';
+        b.style.animationDelay = (Math.random() * 10) + 's';
+        document.body.appendChild(b);
+    }
+</script>
+
+</body>
+</html>
