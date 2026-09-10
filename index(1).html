@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#8e69b5" />
+    <title>香芋清单 · 今日待办</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="topbar">
+        <div class="brand-mark" aria-hidden="true">芋</div>
+        <div>
+          <p class="eyebrow">TODAY / TASKS</p>
+          <h1>香芋清单</h1>
+        </div>
+        <div class="date-chip" id="todayDate"></div>
+      </header>
+
+      <section class="hero-panel" aria-labelledby="pageTitle">
+        <div>
+          <p class="eyebrow light">保持一点轻盈</p>
+          <h2 id="pageTitle">把今天，<em>一件一件</em>完成。</h2>
+          <p class="hero-copy">记录当下要做的事，完成后就让它安静地离开待办区。</p>
+        </div>
+        <div class="progress-orb" aria-label="未完成任务数量">
+          <span id="remainingCount">0</span>
+          <small>待完成</small>
+        </div>
+      </section>
+
+      <section class="workspace" aria-label="待办事项">
+        <form class="task-form" id="taskForm">
+          <label class="sr-only" for="taskInput">添加新任务</label>
+          <input id="taskInput" name="task" type="text" maxlength="100" placeholder="接下来想完成什么？" autocomplete="off" required />
+          <button class="add-button" type="submit" aria-label="添加任务"><span aria-hidden="true">＋</span> 添加</button>
+        </form>
+
+        <div class="toolbar">
+          <div class="filter-tabs" role="tablist" aria-label="任务筛选">
+            <button class="filter-tab is-active" data-filter="all" role="tab" aria-selected="true">全部 <span id="allCount">0</span></button>
+            <button class="filter-tab" data-filter="active" role="tab" aria-selected="false">未完成 <span id="activeCount">0</span></button>
+            <button class="filter-tab" data-filter="completed" role="tab" aria-selected="false">已完成 <span id="completedCount">0</span></button>
+          </div>
+          <button class="clear-button" id="clearCompleted" type="button">清除已完成</button>
+        </div>
+
+        <div class="task-list" id="taskList" aria-live="polite"></div>
+        <div class="empty-state" id="emptyState" hidden>
+          <div class="empty-icon" aria-hidden="true">✦</div>
+          <h3 id="emptyTitle">还没有任务</h3>
+          <p id="emptyCopy">把一个小目标放进来，今天就从这里开始。</p>
+        </div>
+      </section>
+
+      <footer class="footer-note"><span class="save-dot" aria-hidden="true"></span> 自动保存已开启</footer>
+    </main>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script src="app.js"></script>
+  </body>
+</html>
