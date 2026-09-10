@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="一个简洁、易用的在线计算器" />
+    <title>简易计算器</title>
+    <style>
+      :root { color-scheme: light; --ink: #172026; --muted: #718086; --paper: #f4f1ea; --panel: #fffdf9; --line: #e5e1d8; --teal: #087f75; --coral: #e36d4f; }
+      * { box-sizing: border-box; }
+      body { margin: 0; min-width: 320px; min-height: 100vh; color: var(--ink); font-family: Arial, sans-serif; background: #f4f1ea; }
+      .page-shell { display: grid; min-height: 100vh; place-items: center; padding: 32px 20px; }
+      .calculator { width: min(100%, 390px); }
+      .calculator-heading { margin: 0 0 16px 8px; }
+      .eyebrow { margin: 0 0 7px; color: var(--coral); font-size: 11px; letter-spacing: 2px; }
+      h1 { margin: 0; font-size: 34px; }
+      .display { min-height: 132px; padding: 22px 24px; overflow: hidden; text-align: right; border-radius: 10px 10px 0 0; background: var(--ink); }
+      .expression { height: 26px; overflow: hidden; color: #9caeae; font-size: 15px; white-space: nowrap; text-overflow: ellipsis; }
+      .result { overflow: hidden; color: white; font-size: 48px; white-space: nowrap; text-overflow: ellipsis; }
+      .keypad { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; padding: 12px; border-radius: 0 0 10px 10px; background: var(--line); }
+      .key { min-height: 64px; border: 0; color: var(--ink); background: var(--panel); font-size: 20px; cursor: pointer; }
+      .key:hover { background: #f1eee7; } .key-muted { color: var(--muted); } .key-operator { color: var(--teal); background: #edf7f3; } .key-equals { color: white; background: var(--coral); } .key-zero { grid-column: span 2; }
+      .hint { margin: 16px 0 0; color: var(--muted); font-size: 12px; text-align: center; }
+      @media (max-width: 420px) { .page-shell { padding: 24px 14px; } .key { min-height: 58px; } }
+    </style>
+  </head>
+  <body>
+    <main class="page-shell">
+      <section class="calculator" aria-label="在线计算器">
+        <div class="calculator-heading">
+          <p class="eyebrow">QUICK MATH</p>
+          <h1>简易计算器</h1>
+        </div>
+
+        <div class="display" aria-live="polite">
+          <div class="expression" id="expression">&nbsp;</div>
+          <div class="result" id="result">0</div>
+        </div>
+
+        <div class="keypad">
+          <button class="key key-muted" data-action="clear" type="button">AC</button>
+          <button class="key key-muted" data-action="backspace" type="button" aria-label="删除一位">⌫</button>
+          <button class="key key-muted" data-action="percent" type="button">%</button>
+          <button class="key key-operator" data-value="/" type="button" aria-label="除">÷</button>
+
+          <button class="key" data-value="7" type="button">7</button>
+          <button class="key" data-value="8" type="button">8</button>
+          <button class="key" data-value="9" type="button">9</button>
+          <button class="key key-operator" data-value="*" type="button" aria-label="乘">×</button>
+
+          <button class="key" data-value="4" type="button">4</button>
+          <button class="key" data-value="5" type="button">5</button>
+          <button class="key" data-value="6" type="button">6</button>
+          <button class="key key-operator" data-value="-" type="button">−</button>
+
+          <button class="key" data-value="1" type="button">1</button>
+          <button class="key" data-value="2" type="button">2</button>
+          <button class="key" data-value="3" type="button">3</button>
+          <button class="key key-operator" data-value="+" type="button">+</button>
+
+          <button class="key key-zero" data-value="0" type="button">0</button>
+          <button class="key" data-value="." type="button">.</button>
+          <button class="key key-equals" data-action="equals" type="button">=</button>
+        </div>
+      </section>
+      <p class="hint">支持键盘输入 · Enter 计算 · Esc 清空</p>
+    </main>
+    <script>
+      const expressionElement = document.querySelector('#expression');
+      const resultElement = document.querySelector('#result');
+      let currentInput = '0';
+      let storedExpression = '';
+      let justCalculated = false;
+
+      function render() { expressionElement.textContent = storedExpression || '\u00a0'; resultElement.textContent = currentInput; }
+      function appendValue(value) {
+        if (justCalculated && /[0-9.]/.test(value)) { currentInput = '0'; storedExpression = ''; justCalculated = false; }
+        if (/[+\-*/]/.test(value)) {
+          if (storedExpression && /[+\-*/] $/.test(storedExpression)) storedExpression = storedExpression.slice(0, -2) + `${value} `;
+          else { storedExpression += `${currentInput} ${value} `; currentInput = '0'; }
+        } else if (value === '.') { if (!currentInput.includes('.')) currentInput += '.'; }
+        else currentInput = currentInput === '0' ? value : currentInput + value;
+        render();
+      }
+      function calculate() {
+        const fullExpression = `${storedExpression}${currentInput}`;
+        if (!/[+\-*/]/.test(fullExpression)) return;
+        try { const result = Function(`"use strict"; return (${fullExpression})`)(); if (!Number.isFinite(result)) throw new Error(); storedExpression = `${fullExpression} =`; currentInput = String(Number(result.toFixed(10))); }
+        catch { storedExpression = ''; currentInput = '错误'; }
+        justCalculated = true; render();
+      }
+      function clear() { currentInput = '0'; storedExpression = ''; justCalculated = false; render(); }
+      function backspace() { currentInput = currentInput.length > 1 ? currentInput.slice(0, -1) : '0'; render(); }
+      document.querySelector('.keypad').addEventListener('click', (event) => {
+        const button = event.target.closest('button'); if (!button) return;
+        const { action, value } = button.dataset;
+        if (action === 'clear') clear(); else if (action === 'backspace') backspace(); else if (action === 'percent') { currentInput = String(Number(currentInput) / 100); render(); } else if (action === 'equals') calculate(); else appendValue(value);
+      });
+      document.addEventListener('keydown', (event) => { if (/^[0-9.]$/.test(event.key) || /^[+\-*/]$/.test(event.key)) appendValue(event.key); else if (event.key === 'Enter' || event.key === '=') calculate(); else if (event.key === 'Escape') clear(); else if (event.key === 'Backspace') backspace(); });
+      render();
+    </script>
+  </body>
+</html>
