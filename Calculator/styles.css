@@ -1,0 +1,61 @@
+/* styles.css - extracted from original and optimized for mobile */
+:root{
+  --card-bg: rgba(255,255,255,0.55);
+  --shadow-1: rgba(180,160,220,0.22);
+  --accent-1: #f7a8c4;
+  --accent-2: #f9c8a0;
+  --button-size: 64px;
+  --gap: 12px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family: 'PingFang SC','Microsoft YaHei',sans-serif;
+  display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(160deg,#fff0f4 0%,#fff8e8 30%,#eefaf2 60%,#eef1fd 100%);
+  padding:20px;
+}
+.calculator{
+  width:360px;max-width:96vw;background:var(--card-bg);
+  border-radius:20px;padding:18px;box-shadow:0 24px 60px var(--shadow-1);
+}
+.title{font-weight:700;text-align:center;margin-bottom:12px;font-size:20px;background:linear-gradient(90deg,var(--accent-1),var(--accent-2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.screen{background:rgba(255,255,255,0.96);border-radius:14px;padding:14px;margin-bottom:14px;min-height:86px;display:flex;flex-direction:column;justify-content:space-between;position:relative}
+.screen::before{content:"";position:absolute;left:0;right:0;top:0;height:6px;border-radius:14px 14px 0 0;background:linear-gradient(90deg,#f7a8c4,#f9c8a0,#f7dd8e)}
+.history{color:#bcb3ce;font-size:14px;min-height:18px}
+.display{font-size:34px;font-weight:700;color:#5f5972;word-break:break-all}
+.buttons{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--gap)}
+button.btn{height:var(--button-size);border-radius:14px;border:none;font-size:20px;font-weight:700;color:#fff;cursor:pointer;user-select:none}
+button.btn:active{transform:translateY(3px);filter:brightness(1.03)}
+button.btn:focus{outline:3px solid rgba(120,100,200,0.18);outline-offset:4px}
+.btn-num{box-shadow:0 6px 0 rgba(0,0,0,0.06)}
+.btn-n7{background:linear-gradient(150deg,#fcd0e0,#f7a8c4)}
+.btn-n8{background:linear-gradient(150deg,#fdd9c0,#f9bd94)}
+.btn-n9{background:linear-gradient(150deg,#faedb5,#f5da8c)}
+.btn-n4{background:linear-gradient(150deg,#c5ead3,#98d8b4)}
+.btn-n5{background:linear-gradient(150deg,#bdeae2,#8dd9cd)}
+.btn-n6{background:linear-gradient(150deg,#c4e0f7,#93c9ee)}
+.btn-n1{background:linear-gradient(150deg,#c6cdf5,#9aa6ec)}
+.btn-n2{background:linear-gradient(150deg,#dccdf3,#bd9fe8)}
+.btn-n3{background:linear-gradient(150deg,#f7cbe4,#eaa4cd)}
+.btn-zero{background:linear-gradient(90deg,#fcd0e0,#fdd9c0,#faedb5);grid-column:span 2}
+.btn-clear{background:linear-gradient(150deg,#d8d2e6,#b8b0cc)}
+.btn-del{background:linear-gradient(150deg,#f0c8ae,#e0a583)}
+.btn-op{background:linear-gradient(150deg,#bcc4ef,#93a0e5)}
+.btn-dot{background:linear-gradient(150deg,#d3bce9,#b28fdd)}
+.btn-equal{background:linear-gradient(90deg,#f7a8c4,#f9c8a0);grid-column:span 1}
+.btn-mem{background:linear-gradient(120deg,#f3e6ff,#e8f8ff);color:#2d2a3a}
+.emoji-pop{position:fixed;font-size:42px;pointer-events:none;z-index:99}
+@media (max-width:420px){
+  :root{--button-size:58px}
+  .calculator{width:94vw;padding:14px}
+  .display{font-size:28px}
+}
+@media (orientation:landscape) and (max-width:900px){
+  .calculator{display:flex;align-items:stretch}
+  .screen{flex:1;margin-right:12px;min-width:180px}
+  .buttons{flex:1;grid-template-columns:repeat(4,1fr);gap:10px}
+}
+@media (prefers-reduced-motion:reduce){
+  *{transition:none!important;animation:none!important}
+}

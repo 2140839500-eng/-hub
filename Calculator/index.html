@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="马卡龙风格的可访问计算器（拆分为独立文件），使用 math.js 做安全解析，支持括号与记忆键（M+, M-, MR）。" />
+  <title>🍬 马卡龙计算器</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="calculator" role="application" aria-label="马卡龙计算器">
+    <header class="title">🍬 马卡龙计算器</header>
+
+    <section class="screen" aria-live="polite" aria-atomic="true">
+      <div class="history" id="history"></div>
+      <div class="display" id="display" role="status">0</div>
+    </section>
+
+    <section class="buttons">
+      <!-- memory row -->
+      <button class="btn btn-mem" data-action="mplus" aria-label="记忆加">M+</button>
+      <button class="btn btn-mem" data-action="mminus" aria-label="记忆减">M-</button>
+      <button class="btn btn-mem" data-action="mrecall" aria-label="记忆读取">MR</button>
+      <button class="btn btn-clear" data-action="clear" aria-label="清除">C</button>
+
+      <!-- parentheses / percent / divide -->
+      <button class="btn btn-op" data-value="(">(</button>
+      <button class="btn btn-op" data-value=")">)</button>
+      <button class="btn btn-op" data-value="%">%</button>
+      <button class="btn btn-op" data-value="÷">÷</button>
+
+      <!-- numbers and operators -->
+      <button class="btn btn-num btn-n7" data-value="7">7</button>
+      <button class="btn btn-num btn-n8" data-value="8">8</button>
+      <button class="btn btn-num btn-n9" data-value="9">9</button>
+      <button class="btn btn-op" data-value="×">×</button>
+
+      <button class="btn btn-num btn-n4" data-value="4">4</button>
+      <button class="btn btn-num btn-n5" data-value="5">5</button>
+      <button class="btn btn-num btn-n6" data-value="6">6</button>
+      <button class="btn btn-op" data-value="−">−</button>
+
+      <button class="btn btn-num btn-n1" data-value="1">1</button>
+      <button class="btn btn-num btn-n2" data-value="2">2</button>
+      <button class="btn btn-num btn-n3" data-value="3">3</button>
+      <button class="btn btn-op" data-value="+">+</button>
+
+      <button class="btn btn-zero" data-value="0">0</button>
+      <button class="btn btn-dot" data-value=".">.</button>
+      <button class="btn btn-del" data-action="delete" aria-label="删除">⌫</button>
+      <button class="btn btn-equal" data-action="equals" aria-label="等于">=</button>
+    </section>
+  </main>
+
+  <!-- math.js from CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/mathjs@11.11.0/lib/browser/math.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
