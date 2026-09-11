@@ -1,0 +1,26 @@
+<!-- Backup of original 'Caculator' file. Moved here before deleting original from root.
+     Source: /Caculator (commit 2a7b958f...)
+-->
+
+1| cd "D:\my index\my profile"
+2| git init
+3| git add .
+4| git commit -m "第1次提交：创建首页"
+5|
+6| # 修改一点内容（比如用记事本或VS Code打开index.html随便加个字），再提交：
+7| git add .
+8| git commit -m "第2次提交：完善内容"
+9| git add .
+10| git commit -m "第3次提交：最终调整"
+11|
+12| https://hub-jovi8.vercel.app/
+13| https://2140839500-eng.github.io/-hub/
+14| <!DOCTYPE html>
+15| <html lang="zh-CN">
+16| <head>
+17| <meta charset="UTF-8">
+18| <meta name="viewport" content="width=device-width, initial-scale=1.0">
+19| <meta name="description" content="马卡龙风格的可访问计算器，支持键盘、粘贴、复制结果和简易百分号处理。">
+20| <title>🍬 马卡龙计算器</title>
+... (content truncated for brevity) ...
+547| </html>
